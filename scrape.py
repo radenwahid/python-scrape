@@ -12,15 +12,16 @@ def scrape_website(website):
     chrome_options.add_argument("--headless")  # Run in headless mode
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Additional flag for cloud environments
     
-    # Using webdriver-manager to automatically manage chromedriver
+    # Use webdriver-manager to install the correct chromedriver version
     driver_service = Service(ChromeDriverManager().install())
 
     # Initialize WebDriver with options and service
     with webdriver.Chrome(service=driver_service, options=chrome_options) as driver:
         driver.get(website)
 
-        # Optionally: Add logic to handle CAPTCHA here if needed
+        # Optional: Add logic to handle CAPTCHA here if needed
 
         print('Navigating! Scraping page content...')
         html = driver.page_source

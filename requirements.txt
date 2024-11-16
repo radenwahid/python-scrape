@@ -10,3 +10,4 @@ pdfplumber
 httpx
 openpyxl
 chromedriver-autoinstaller
+chromium-browser

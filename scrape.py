@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import logging
+import os
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +22,11 @@ def scrape_website(website):
     chrome_options.add_argument("--headless")  # Run in headless mode if you don’t need a visible browser
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
-    
+
+    # For Streamlit, use chromium instead of chrome (as chrome might not be available)
+    if "STREAMLIT_SERVER" in os.environ:  # Check if running in Streamlit Cloud
+        chrome_options.binary_location = "/usr/bin/chromium"  # Path to chromium executable in the cloud
+
     try:
         logger.info(f"Launching local Chrome browser to scrape {website} ...")
         # Initialize Chrome WebDriver

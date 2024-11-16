@@ -1,21 +1,26 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 
 def scrape_website(website):
-    print("Launching local Chrome browser ...")
+    print("Launching Chrome browser with selenium...")
+
+    # Set up headless chrome options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run in headless mode if you don’t need a visible browser
+    chrome_options.add_argument("--headless")  # Run in headless mode
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
+    
+    # Using webdriver-manager to automatically manage chromedriver
+    driver_service = Service(ChromeDriverManager().install())
 
-    # Initialize local Chrome WebDriver
-    with webdriver.Chrome(options=chrome_options) as driver:
+    # Initialize WebDriver with options and service
+    with webdriver.Chrome(service=driver_service, options=chrome_options) as driver:
         driver.get(website)
 
-        # Optional: handle CAPTCHA, but you'll need a third-party CAPTCHA-solving service if CAPTCHA appears
-        # print('Waiting for captcha to solve...')
-        # You may implement CAPTCHA handling here if needed
+        # Optionally: Add logic to handle CAPTCHA here if needed
 
         print('Navigating! Scraping page content...')
         html = driver.page_source
@@ -32,8 +37,8 @@ def clean_body_content(body_content):
     soup = BeautifulSoup(body_content, "html.parser")
     
     for script_or_style in soup(["script", "style"]):
-        script_or_style.extract()
-        
+        script_or_style.extract()  # Remove script and style elements
+
     cleaned_content = soup.get_text(separator="\n")
     cleaned_content = "\n".join(
         line.strip() for line in cleaned_content.splitlines() if line.strip()

@@ -3,9 +3,8 @@ import pandas as pd
 import pdfplumber
 from parse import parse_with_ollama 
 from scrape import scrape_website, split_dom_content, clean_body_content, extract_body_content
-
-
-
+import httpx
+import time
 
 # Streamlit UI
 st.title("Scrape What You :blue[Want]")
@@ -27,12 +26,19 @@ if st.button("Process Content"):
     if url:
         try:
             st.write("Scraping the website...")
+            start_time = time.time()  # Start measuring time
             result = scrape_website(url)
             body_content = extract_body_content(result)
             cleaned_content = clean_body_content(body_content)
             st.session_state.dom_content = cleaned_content  # Save the cleaned content
+            elapsed_time = time.time() - start_time  # Measure elapsed time
+            st.write(f"Website scraped in {elapsed_time:.2f} seconds.")
             success = True
             
+        except httpx.ConnectError as e:
+            st.error(f"Failed to connect to the website: {e}")
+        except httpx.RequestError as e:
+            st.error(f"Request error: {e}")
         except Exception as e:
             st.error(f"Failed to scrape the website: {e}")
 

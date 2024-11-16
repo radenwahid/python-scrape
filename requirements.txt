@@ -9,4 +9,5 @@ python-dotenv
 pdfplumber
 httpx
 openpyxl
-webdriver-manager==5.2.0
+webdriver-manager
+
